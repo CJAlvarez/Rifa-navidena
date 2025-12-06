@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⭐ Sorteo Navideño 🎄</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>⭐ Sorteo Navideño 🎄</h1>
+            <p class="subtitle">Ingresa los nombres y deja que esta app navideña decida</p>
+        </header>
+
+        <div class="input-section" id="inputSection">
+            <div class="card">
+                <h2>📝 Lista de Participantes</h2>
+                <textarea 
+                    id="namesInput" 
+                    placeholder="Ingresa los nombres, uno por línea:&#10;&#10;María&#10;Juan&#10;Pedro&#10;Ana&#10;Carlos"
+                    rows="8"
+                ></textarea>
+                <div class="shuffle-controls">
+                    <label for="shuffleCount">Veces a mezclar:</label>
+                    <input type="number" id="shuffleCount" min="3" max="50" value="10">
+                </div>
+                <button id="startButton" class="btn btn-primary">
+                    ✨ Comenzar Sorteo ✨
+                </button>
+            </div>
+        </div>
+
+        <div class="results-section hidden" id="resultsSection">
+            <div class="card">
+                <h2>🎁 Orden del Sorteo</h2>
+                <div id="namesList" class="names-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FABs Flotantes -->
+    <div class="fab-container hidden" id="fabContainer">
+        <button id="nextButton" class="fab fab-primary" title="Siguiente">
+            ▶️
+        </button>
+        <button id="shuffleAgainButton" class="fab fab-warning" title="Revolver de Nuevo">
+            🔄
+        </button>
+        <button id="resetButton" class="fab fab-secondary" title="Volver al Inicio">
+            🏠
+        </button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
