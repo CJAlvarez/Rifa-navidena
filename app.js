@@ -13,6 +13,7 @@ const namesList = document.getElementById('namesList');
 const nextButton = document.getElementById('nextButton');
 const shuffleAgainButton = document.getElementById('shuffleAgainButton');
 const resetButton = document.getElementById('resetButton');
+const shareButton = document.getElementById('shareButton');
 const fabContainer = document.getElementById('fabContainer');
 
 // Event Listeners
@@ -20,6 +21,10 @@ startButton.addEventListener('click', startDraw);
 nextButton.addEventListener('click', highlightNext);
 shuffleAgainButton.addEventListener('click', reshuffleNames);
 resetButton.addEventListener('click', resetApp);
+shareButton.addEventListener('click', shareURL);
+
+// Cargar estado desde URL al iniciar
+window.addEventListener('load', loadStateFromURL);
 
 // Función para iniciar el sorteo
 function startDraw() {
@@ -64,6 +69,9 @@ function startDraw() {
     
     // Deshabilitar botón de siguiente
     nextButton.disabled = false;
+    
+    // Guardar estado en URL
+    saveStateToURL();
 }
 
 // Función para mezclar nombres N veces
@@ -140,6 +148,9 @@ function highlightNext() {
             // Habilitar botón para el siguiente
             nextButton.disabled = false;
         }
+        
+        // Guardar estado en URL
+        saveStateToURL();
     }, 2000);
 }
 
@@ -165,6 +176,9 @@ function reshuffleNames() {
     // Habilitar botón de siguiente
     nextButton.disabled = false;
     nextButton.textContent = '▶️';
+    
+    // Guardar estado en URL
+    saveStateToURL();
 }
 
 // Función para resetear la aplicación
@@ -191,6 +205,79 @@ function resetApp() {
     // Resetear botón de siguiente
     nextButton.disabled = false;
     nextButton.textContent = '▶️ Siguiente';
+    
+    // Limpiar URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+// Función para guardar el estado en la URL
+function saveStateToURL() {
+    const state = {
+        names: names,
+        currentIndex: currentIndex,
+        shuffleCount: shuffleCount
+    };
+    
+    // Convertir a JSON y codificar en Base64
+    const stateString = btoa(encodeURIComponent(JSON.stringify(state)));
+    
+    // Actualizar URL sin recargar la página
+    const newURL = `${window.location.pathname}?state=${stateString}`;
+    window.history.replaceState({}, document.title, newURL);
+}
+
+// Función para cargar el estado desde la URL
+function loadStateFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const stateString = urlParams.get('state');
+    
+    if (!stateString) {
+        return; // No hay estado guardado
+    }
+    
+    try {
+        // Decodificar Base64 y parsear JSON
+        const state = JSON.parse(decodeURIComponent(atob(stateString)));
+        
+        // Validar que el estado tenga los datos necesarios
+        if (!state.names || !Array.isArray(state.names) || state.names.length === 0) {
+            return;
+        }
+        
+        // Restaurar variables
+        names = state.names;
+        currentIndex = state.currentIndex || 0;
+        shuffleCount = state.shuffleCount || 10;
+        
+        // Mostrar sección de resultados
+        inputSection.classList.add('hidden');
+        resultsSection.classList.remove('hidden');
+        fabContainer.classList.remove('hidden');
+        
+        // Renderizar la lista
+        renderNamesList();
+        
+        // Marcar los nombres ya seleccionados
+        const items = document.querySelectorAll('.name-item');
+        items.forEach((item, index) => {
+            if (index < currentIndex) {
+                item.classList.add('selected');
+            }
+        });
+        
+        // Actualizar estado del botón
+        if (currentIndex >= names.length) {
+            nextButton.disabled = true;
+            nextButton.style.background = 'linear-gradient(135deg, #6c757d 0%, #868e96 100%)';
+        } else {
+            nextButton.disabled = false;
+        }
+        
+    } catch (error) {
+        console.error('Error al cargar el estado desde la URL:', error);
+        // Si hay un error, limpiar la URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 }
 
 // Agregar efecto de teclado para textarea
@@ -199,3 +286,49 @@ namesInput.addEventListener('keydown', (e) => {
         startDraw();
     }
 });
+
+// Agregar listener para cambios en el historial
+window.addEventListener('popstate', loadStateFromURL);
+
+// Función para compartir/copiar la URL
+async function shareURL() {
+    const currentURL = window.location.href;
+    
+    try {
+        // Copiar al portapapeles
+        await navigator.clipboard.writeText(currentURL);
+        
+        // Feedback visual
+        const originalEmoji = shareButton.textContent;
+        shareButton.textContent = '✅';
+        shareButton.classList.add('copied');
+        
+        // Mostrar mensaje temporal
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = '¡URL copiada al portapapeles!';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            shareButton.textContent = originalEmoji;
+            shareButton.classList.remove('copied');
+            toast.remove();
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error al copiar:', error);
+        
+        // Fallback: mostrar la URL para copiar manualmente
+        const fallbackToast = document.createElement('div');
+        fallbackToast.className = 'toast';
+        fallbackToast.innerHTML = `<input type="text" value="${currentURL}" readonly style="width: 100%; padding: 5px; border: none; border-radius: 5px;">`;
+        fallbackToast.style.width = '300px';
+        document.body.appendChild(fallbackToast);
+        
+        fallbackToast.querySelector('input').select();
+        
+        setTimeout(() => {
+            fallbackToast.remove();
+        }, 4000);
+    }
+}

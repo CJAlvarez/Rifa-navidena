@@ -441,6 +441,26 @@ textarea:focus {
     background: linear-gradient(135deg, #868e96 0%, #adb5bd 100%);
 }
 
+.fab-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c9e0 100%);
+    color: white;
+    animation-delay: 0s;
+}
+
+.fab-info:hover {
+    background: linear-gradient(135deg, #20c9e0 0%, #4dd4e8 100%);
+}
+
+.fab-info.copied {
+    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
+    animation: copySuccess 0.5s ease;
+}
+
+@keyframes copySuccess {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
 .fab:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -491,5 +511,40 @@ textarea:focus {
         width: 55px;
         height: 55px;
         font-size: 1.5em;
+    }
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 150px;
+    right: 30px;
+    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    z-index: 1002;
+    font-weight: bold;
+    animation: toastIn 0.3s ease-out;
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .toast {
+        bottom: 120px;
+        right: 20px;
+        font-size: 0.9em;
+        padding: 12px 20px;
     }
 }
