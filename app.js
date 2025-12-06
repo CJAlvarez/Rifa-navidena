@@ -204,7 +204,7 @@ function resetApp() {
     
     // Resetear botón de siguiente
     nextButton.disabled = false;
-    nextButton.textContent = '▶️ Siguiente';
+    nextButton.textContent = '▶️';
     
     // Limpiar URL
     window.history.replaceState({}, document.title, window.location.pathname);
